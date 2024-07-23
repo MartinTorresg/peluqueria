@@ -89,7 +89,22 @@ ipcMain.handle('reload-app', () => {
 // Manejo de IPC para operaciones de Excel
 ipcMain.handle('add-cliente', async (event, cliente) => {
   const clientes = readDataFromSheet('Clientes');
+  cliente.id = clientes.length ? Math.max(clientes.map(c => c.id)) + 1 : 1; // Asignar ID único
   clientes.push(cliente);
+  writeDataToSheet('Clientes', clientes);
+  return { success: true };
+});
+
+ipcMain.handle('update-cliente', async (event, updatedCliente) => {
+  let clientes = readDataFromSheet('Clientes');
+  clientes = clientes.map(cliente => cliente.id === updatedCliente.id ? updatedCliente : cliente);
+  writeDataToSheet('Clientes', clientes);
+  return { success: true };
+});
+
+ipcMain.handle('delete-cliente', async (event, id) => {
+  let clientes = readDataFromSheet('Clientes');
+  clientes = clientes.filter(cliente => cliente.id !== id);
   writeDataToSheet('Clientes', clientes);
   return { success: true };
 });

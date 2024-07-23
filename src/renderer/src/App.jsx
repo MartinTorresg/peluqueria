@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import ProgramarCita from './components/ProgramarCita';
 import Productos from './components/ProductosYServicios';
-import Reportes from './components/Reportes';
+import Clientes from './components/Clientes'; // Importa el componente Clientes
 import './App.css';
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
           <Routes>
             <Route path="/programar-citas" element={<ProgramarCita />} />
             <Route path="/productos-y-servicios" element={<Productos />} />
-            <Route path="/reportes" element={<Reportes />} />
+            <Route path="/clientes" element={<Clientes />} /> {/* Agrega la ruta para Clientes */}
           </Routes>
         </main>
       </div>
