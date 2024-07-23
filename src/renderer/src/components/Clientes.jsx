@@ -8,9 +8,10 @@ const Clientes = () => {
   const [clientes, setClientes] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [nombre, setNombre] = useState('');
-  const [telefono, setTelefono] = useState('');
+  const [telefono, setTelefono] = useState('(+569)');
   const [email, setEmail] = useState('');
   const [editingCliente, setEditingCliente] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -34,18 +35,23 @@ const Clientes = () => {
   const handleCloseModal = () => {
     setModalIsOpen(false);
     setNombre('');
-    setTelefono('');
+    setTelefono('(+569)');
     setEmail('');
     setEditingCliente(null);
+    setError('');
   };
 
   const handleAddCliente = async () => {
     try {
       const newCliente = { nombre, telefono, email };
       console.log('Adding cliente:', newCliente);
-      await window.electron.invoke('add-cliente', newCliente);
-      setClientes([...clientes, newCliente]);
-      handleCloseModal();
+      const response = await window.electron.invoke('add-cliente', newCliente);
+      if (response.success) {
+        setClientes([...clientes, newCliente]);
+        handleCloseModal();
+      } else {
+        setError(response.error);
+      }
     } catch (error) {
       console.error('Error adding client:', error);
     }
@@ -103,7 +109,7 @@ const Clientes = () => {
         </thead>
         <tbody>
           {clientes.map((cliente) => (
-            <tr key={cliente.id}> {/* Agregar key aquí */}
+            <tr key={cliente.id}>
               <td className="py-2 px-4 border-b">{cliente.nombre}</td>
               <td className="py-2 px-4 border-b">{cliente.telefono}</td>
               <td className="py-2 px-4 border-b">{cliente.email}</td>
@@ -162,6 +168,7 @@ const Clientes = () => {
               className="w-full px-3 py-2 border rounded"
             />
           </div>
+          {error && <div className="text-red-500 mb-4">{error}</div>}
           <div className="flex justify-end">
             <button
               type="button"

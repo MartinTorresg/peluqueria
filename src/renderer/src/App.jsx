@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import ProgramarCita from './components/ProgramarCita';
 import Productos from './components/ProductosYServicios';
 import Clientes from './components/Clientes'; // Importa el componente Clientes
+import AgendaCitas from './components/AgendaCitas';
 import './App.css';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/programar-citas" element={<ProgramarCita />} />
             <Route path="/productos-y-servicios" element={<Productos />} />
             <Route path="/clientes" element={<Clientes />} /> {/* Agrega la ruta para Clientes */}
+            <Route path="/" element={<AgendaCitas />} />
           </Routes>
         </main>
       </div>

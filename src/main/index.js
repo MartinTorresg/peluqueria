@@ -14,51 +14,112 @@ const PORT = 3300;
 backendApp.use(cors());
 backendApp.use(express.json());
 
-const clientesFilePath = join(__dirname, '../../Resources/clientes.csv');
+const clientesFilePath = join(__dirname, '../../resources/clientes.csv');
+const productosServiciosFilePath = join(__dirname, '../../resources/productos_servicios.csv');
+const citasFilePath = join(__dirname, '../../resources/citas.csv');
 
-const readClientesFromCsv = async () => {
+const readDataFromCsv = async (filePath) => {
   try {
-    const fileData = await fs.readFile(clientesFilePath, 'utf-8');
+    const fileData = await fs.readFile(filePath, 'utf-8');
     const parsedData = Papa.parse(fileData, { header: true });
     return parsedData.data;
   } catch (error) {
-    console.error('Error reading CSV file:', error);
+    console.error(`Error reading CSV file from ${filePath}:`, error);
     return [];
   }
 };
 
-const writeClientesToCsv = async (clientes) => {
+const writeDataToCsv = async (filePath, data) => {
   try {
-    const csv = Papa.unparse(clientes);
-    await fs.writeFile(clientesFilePath, csv, 'utf-8');
+    const csv = Papa.unparse(data);
+    await fs.writeFile(filePath, csv, 'utf-8');
   } catch (error) {
-    console.error('Error writing to CSV file:', error);
+    console.error(`Error writing to CSV file at ${filePath}:`, error);
   }
 };
 
+// Clientes IPC Handlers
 ipcMain.handle('get-clientes', async () => {
-  return await readClientesFromCsv();
+  return await readDataFromCsv(clientesFilePath);
 });
 
 ipcMain.handle('add-cliente', async (event, cliente) => {
-  const clientes = await readClientesFromCsv();
+  const clientes = await readDataFromCsv(clientesFilePath);
+  const existingClient = clientes.find(c => c.telefono === cliente.telefono);
+  if (existingClient) {
+    throw new Error('El número de teléfono ya existe.');
+  }
   cliente.id = uuidv4(); // Generar un ID único
   clientes.push(cliente);
-  await writeClientesToCsv(clientes);
+  await writeDataToCsv(clientesFilePath, clientes);
   return { success: true };
 });
 
 ipcMain.handle('update-cliente', async (event, updatedCliente) => {
-  let clientes = await readClientesFromCsv();
+  let clientes = await readDataFromCsv(clientesFilePath);
   clientes = clientes.map(cliente => cliente.id === updatedCliente.id ? updatedCliente : cliente);
-  await writeClientesToCsv(clientes);
+  await writeDataToCsv(clientesFilePath, clientes);
   return { success: true };
 });
 
 ipcMain.handle('delete-cliente', async (event, id) => {
-  let clientes = await readClientesFromCsv();
+  let clientes = await readDataFromCsv(clientesFilePath);
   clientes = clientes.filter(cliente => cliente.id !== id);
-  await writeClientesToCsv(clientes);
+  await writeDataToCsv(clientesFilePath, clientes);
+  return { success: true };
+});
+
+// Productos y Servicios IPC Handlers
+ipcMain.handle('get-productos-servicios', async () => {
+  return await readDataFromCsv(productosServiciosFilePath);
+});
+
+ipcMain.handle('add-producto-servicio', async (event, producto) => {
+  const productos = await readDataFromCsv(productosServiciosFilePath);
+  producto.id = uuidv4(); // Generar un ID único
+  productos.push(producto);
+  await writeDataToCsv(productosServiciosFilePath, productos);
+  return { success: true };
+});
+
+ipcMain.handle('update-producto-servicio', async (event, updatedProducto) => {
+  let productos = await readDataFromCsv(productosServiciosFilePath);
+  productos = productos.map(producto => producto.id === updatedProducto.id ? updatedProducto : producto);
+  await writeDataToCsv(productosServiciosFilePath, productos);
+  return { success: true };
+});
+
+ipcMain.handle('delete-producto-servicio', async (event, id) => {
+  let productos = await readDataFromCsv(productosServiciosFilePath);
+  productos = productos.filter(producto => producto.id !== id);
+  await writeDataToCsv(productosServiciosFilePath, productos);
+  return { success: true };
+});
+
+// Citas IPC Handlers
+ipcMain.handle('get-citas', async () => {
+  return await readDataFromCsv(citasFilePath);
+});
+
+ipcMain.handle('add-cita', async (event, cita) => {
+  const citas = await readDataFromCsv(citasFilePath);
+  cita.id = uuidv4(); // Generar un ID único
+  citas.push(cita);
+  await writeDataToCsv(citasFilePath, citas);
+  return { success: true };
+});
+
+ipcMain.handle('update-cita', async (event, updatedCita) => {
+  let citas = await readDataFromCsv(citasFilePath);
+  citas = citas.map(cita => cita.id === updatedCita.id ? updatedCita : cita);
+  await writeDataToCsv(citasFilePath, citas);
+  return { success: true };
+});
+
+ipcMain.handle('delete-cita', async (event, id) => {
+  let citas = await readDataFromCsv(citasFilePath);
+  citas = citas.filter(cita => cita.id !== id);
+  await writeDataToCsv(citasFilePath, citas);
   return { success: true };
 });
 
