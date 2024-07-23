@@ -21,15 +21,21 @@ const AgendaCitas = () => {
           window.electron.invoke('get-productos-servicios')
         ]);
 
+        console.log("Clientes Data:", clientesData);
+        console.log("Servicios Data:", serviciosData);
+        console.log("Citas Data:", citasData);
+
         setClientes(clientesData);
         setServicios(serviciosData);
 
         const eventos = citasData.map((cita) => {
           const cliente = clientesData.find(c => c.id === cita.clienteId) || { nombre: 'Cliente desconocido' };
-          const serviciosAgendados = Array.isArray(cita.servicios) ? cita.servicios.map(servicioId => {
-            const servicio = serviciosData.find(s => s.id === servicioId);
-            return servicio ? servicio.nombre : 'Servicio desconocido';
+          const serviciosAgendados = Array.isArray(cita.servicios) ? cita.servicios.map(servicio => {
+            return servicio.nombre ? servicio.nombre : 'Servicio desconocido';
           }).join(', ') : 'Sin servicios';
+
+          console.log("Cliente:", cliente);
+          console.log("Servicios Agendados:", serviciosAgendados);
 
           return {
             id: cita.id,
@@ -42,6 +48,7 @@ const AgendaCitas = () => {
           };
         });
 
+        console.log("Eventos:", eventos);
         setCitas(eventos);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -91,21 +98,23 @@ const AgendaCitas = () => {
           onRequestClose={handleCloseModal}
           contentLabel="Detalles de la Cita"
           className="bg-white p-6 rounded shadow-lg max-w-lg mx-auto mt-16"
-          overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+          overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
-          <h2 className="text-2xl mb-4">Detalles de la Cita</h2>
-          <p><strong>Fecha Cita:</strong> {moment(selectedEvent.start).format('DD/MM/YYYY')}</p>
-          <p><strong>Hora Inicio:</strong> {moment(selectedEvent.start).format('HH:mm:ss')}</p>
-          <p><strong>Hora Término:</strong> {moment(selectedEvent.end).format('HH:mm:ss')}</p>
-          <p><strong>Servicios Agendados:</strong> {selectedEvent.servicios}</p>
-          <p><strong>Cliente:</strong> {selectedEvent.cliente.nombre}</p>
-          <p><strong>Status Cita:</strong> {selectedEvent.status}</p>
-          <button
-            onClick={handleCloseModal}
-            className="bg-gray-500 text-white px-4 py-2 rounded mt-4 hover:bg-gray-700 focus:outline-none"
-          >
-            Cerrar
-          </button>
+          <div className="relative z-60">
+            <h2 className="text-2xl mb-4">Detalles de la Cita</h2>
+            <p><strong>Fecha Cita:</strong> {moment(selectedEvent.start).format('DD/MM/YYYY')}</p>
+            <p><strong>Hora Inicio:</strong> {moment(selectedEvent.start).format('HH:mm:ss')}</p>
+            <p><strong>Hora Término:</strong> {moment(selectedEvent.end).format('HH:mm:ss')}</p>
+            <p><strong>Servicios Agendados:</strong> {selectedEvent.servicios}</p>
+            <p><strong>Cliente:</strong> {selectedEvent.cliente.nombre}</p>
+            <p><strong>Status Cita:</strong> {selectedEvent.status}</p>
+            <button
+              onClick={handleCloseModal}
+              className="bg-gray-500 text-white px-4 py-2 rounded mt-4 hover:bg-gray-700 focus:outline-none"
+            >
+              Cerrar
+            </button>
+          </div>
         </Modal>
       )}
     </div>

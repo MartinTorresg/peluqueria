@@ -1,4 +1,3 @@
-clienteId,trabajadorId,servicios,fecha,horaInicio,horaFin,id
-9481838a-eafd-4abe-a6f2-6a06a0dce820,fdas,dae2778a-7a45-4ede-811e-5e6bc5688e1f,2024-07-24,15:00,16:00,f4262a48-40e0-4307-a576-b0c66eb117f1
-a4a7a854-03c8-405e-911f-315a5b8ba8f6,fdas,[object Object],2024-07-26,16:00,17:00,217f5972-78aa-40df-9b27-e86a335f17aa
-de12da49-3a20-429b-a4cc-806e0155b65b,fdasfsda,[object Object],2024-07-25,12:00,13:00,2d3aff81-6cff-4fd6-a28a-b5b17e981ea3
+clienteId,trabajadorId,servicios,fecha,horaInicio,horaFin,status,cliente,id
+a4a7a854-03c8-405e-911f-315a5b8ba8f6,fdasfdas,"[{""nombre"":""Corte de Cabello"",""tipo"":""Servicio"",""inventario"":""No"",""costo"":""5000"",""precioVenta"":""10000"",""utilidad"":""5000.00"",""id"":""dae2778a-7a45-4ede-811e-5e6bc5688e1f""}]",2024-07-24,11:11,12:12,Pendiente,[object Object],4b35b502-f171-48d7-89a7-c9b04b3dcc18
+525145a8-7f2c-40f1-8ee3-e6d2f0652042,fsddfas,"[{""nombre"":""Corte de Cabello"",""tipo"":""Servicio"",""inventario"":""No"",""costo"":""5000"",""precioVenta"":""10000"",""utilidad"":""5000.00"",""id"":""dae2778a-7a45-4ede-811e-5e6bc5688e1f""},{""nombre"":""corte mujer"",""tipo"":""Servicio"",""inventario"":""No"",""costo"":""3000"",""precioVenta"":""15000"",""utilidad"":""12000.00"",""id"":""c25c383b-1eb5-4416-9a91-d10e80f61a98""}]",2024-07-26,12:12,12:12,Pendiente,[object Object],9bf5130d-7650-4a71-a493-d0e28bde0768

@@ -9,6 +9,7 @@ const ProgramarCita = () => {
   const [fecha, setFecha] = useState('');
   const [horaInicio, setHoraInicio] = useState('');
   const [horaFin, setHoraFin] = useState('');
+  const [status, setStatus] = useState('Pendiente');
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -53,10 +54,10 @@ const ProgramarCita = () => {
       fecha,
       horaInicio,
       horaFin,
+      status,
     };
-    // Lógica para programar una cita y guardar en CSV
+    console.log('Saving cita:', nuevaCita); // Log para verificar los datos
     await window.electron.invoke('add-cita', nuevaCita);
-    console.log(nuevaCita);
   };
 
   return (
@@ -96,7 +97,7 @@ const ProgramarCita = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="">Seleccionar Servicio</option>
-            {servicios.map((servicio) => (
+            {servicios.filter(s => s.tipo === 'Servicio').map((servicio) => (
               <option key={servicio.id} value={servicio.id}>
                 {servicio.nombre}
               </option>
@@ -107,7 +108,7 @@ const ProgramarCita = () => {
               const servicio = servicios.find((s) => s.id === servicioId);
               return (
                 <li key={servicioId} className="flex justify-between items-center">
-                  {servicio.nombre}
+                  {servicio ? servicio.nombre : 'Servicio desconocido'}
                   <button
                     type="button"
                     onClick={() => handleRemoveServicio(servicioId)}
@@ -149,6 +150,20 @@ const ProgramarCita = () => {
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Estado de la Cita:</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="Pendiente">Pendiente</option>
+            <option value="Confirmada">Confirmada</option>
+            <option value="Cancelada">Cancelada</option>
+            <option value="Completada">Completada</option>
+            <option value="No Asistió">No Asistió</option>
+          </select>
         </div>
         <button
           type="submit"
