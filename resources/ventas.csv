@@ -1,0 +1,2 @@
+fecha,forma,metodoPago,clienteId,servicios,subTotal,descuento,total,usuario,id
+2024-07-24,Contado,Efectivo,a4a7a854-03c8-405e-911f-315a5b8ba8f6,"[{""nombre"":""Corte de Cabello"",""tipo"":""Servicio"",""inventario"":""No"",""costo"":""5000"",""precioVenta"":""10000"",""utilidad"":""5000.00"",""id"":""dae2778a-7a45-4ede-811e-5e6bc5688e1f"",""servicios"":[],""cantidad"":1}]",10000,1000,9000,usuario@example.com,a36601ea-e4b3-4092-af15-5f98b166f340

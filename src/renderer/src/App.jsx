@@ -4,6 +4,7 @@ import ProgramarCita from './components/ProgramarCita';
 import Productos from './components/ProductosYServicios';
 import Clientes from './components/Clientes'; // Importa el componente Clientes
 import AgendaCitas from './components/AgendaCitas';
+import RegistrarVentas from './components/RegistrarVentas';
 import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/productos-y-servicios" element={<Productos />} />
             <Route path="/clientes" element={<Clientes />} /> {/* Agrega la ruta para Clientes */}
             <Route path="/" element={<AgendaCitas />} />
+            <Route path="/registrar-venta" element={<RegistrarVentas />} />
           </Routes>
         </main>
       </div>

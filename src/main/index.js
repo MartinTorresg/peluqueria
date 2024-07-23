@@ -17,23 +17,16 @@ backendApp.use(express.json());
 const clientesFilePath = join(__dirname, '../../resources/clientes.csv');
 const productosServiciosFilePath = join(__dirname, '../../resources/productos_servicios.csv');
 const citasFilePath = join(__dirname, '../../resources/citas.csv');
+const ventasFilePath = join(__dirname, '../../resources/ventas.csv');
 
 const readDataFromCsv = async (filePath) => {
   try {
     const fileData = await fs.readFile(filePath, 'utf-8');
-    const parsedData = Papa.parse(fileData, { header: true, skipEmptyLines: true });
-    // Convertir strings de objetos JSON en objetos reales
-    parsedData.data.forEach(item => {
-      if (item.servicios && typeof item.servicios === 'string') {
-        try {
-          item.servicios = JSON.parse(item.servicios);
-        } catch (error) {
-          console.error(`Error parsing JSON for servicios in ${filePath}:`, error);
-          item.servicios = [];
-        }
-      }
-    });
-    return parsedData.data;
+    const parsedData = Papa.parse(fileData, { header: true });
+    return parsedData.data.map(item => ({
+      ...item,
+      servicios: item.servicios ? JSON.parse(item.servicios) : []
+    }));
   } catch (error) {
     console.error(`Error reading CSV file from ${filePath}:`, error);
     return [];
@@ -42,13 +35,10 @@ const readDataFromCsv = async (filePath) => {
 
 const writeDataToCsv = async (filePath, data) => {
   try {
-    // Convertir objetos a strings JSON antes de guardar
-    data.forEach(item => {
-      if (item.servicios && typeof item.servicios === 'object') {
-        item.servicios = JSON.stringify(item.servicios);
-      }
-    });
-    const csv = Papa.unparse(data);
+    const csv = Papa.unparse(data.map(item => ({
+      ...item,
+      servicios: JSON.stringify(item.servicios)
+    })));
     await fs.writeFile(filePath, csv, 'utf-8');
   } catch (error) {
     console.error(`Error writing to CSV file at ${filePath}:`, error);
@@ -140,6 +130,7 @@ ipcMain.handle('add-cita', async (event, cita) => {
   return { success: true };
 });
 
+
 ipcMain.handle('update-cita', async (event, updatedCita) => {
   let citas = await readDataFromCsv(citasFilePath);
   citas = citas.map(cita => cita.id === updatedCita.id ? updatedCita : cita);
@@ -151,6 +142,19 @@ ipcMain.handle('delete-cita', async (event, id) => {
   let citas = await readDataFromCsv(citasFilePath);
   citas = citas.filter(cita => cita.id !== id);
   await writeDataToCsv(citasFilePath, citas);
+  return { success: true };
+});
+
+// Ventas IPC Handlers
+ipcMain.handle('get-ventas', async () => {
+  return await readDataFromCsv(ventasFilePath);
+});
+
+ipcMain.handle('add-venta', async (event, venta) => {
+  const ventas = await readDataFromCsv(ventasFilePath);
+  venta.id = uuidv4(); // Generar un ID único
+  ventas.push(venta);
+  await writeDataToCsv(ventasFilePath, ventas);
   return { success: true };
 });
 
