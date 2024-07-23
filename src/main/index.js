@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain, Menu } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
+import { writeDataToSheet, readDataFromSheet } from './excelUtils'; // Importa las funciones de Excel
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -83,4 +84,16 @@ ipcMain.handle('close-app', () => {
 ipcMain.handle('reload-app', () => {
   app.relaunch();
   app.exit();
+});
+
+// Manejo de IPC para operaciones de Excel
+ipcMain.handle('add-cliente', async (event, cliente) => {
+  const clientes = readDataFromSheet('Clientes');
+  clientes.push(cliente);
+  writeDataToSheet('Clientes', clientes);
+  return { success: true };
+});
+
+ipcMain.handle('get-clientes', async () => {
+  return readDataFromSheet('Clientes');
 });
