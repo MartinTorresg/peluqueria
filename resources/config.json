@@ -1,0 +1,93 @@
+{
+  "PosMasterDTE_DIR": "C:\\PosMasterDTE\\Bdatos\\",
+  "ip": "192.168.1.87",
+  "mostrarBotonesNutricion": "No",
+  "CustomCustomer": "COLMO",
+  "Print50x30": {
+    "customPageSize": "42mm",
+    "customfontSizePrice": "40px",
+    "customfontSizeName": "11px",
+    "customPageWidth": "180px",
+    "customHeightPrice": "11px",
+    "customHeightName": "6px",
+    "customPageMaxWidth": "140px",
+    "customPrint": "XP-80C",
+    "customfontSizeCustomer": "10px",
+    "pageProperties": {
+      "printPageWidth": 250,
+      "printPageHeight": 181
+    },
+    "pagePropertiesSize": "58mm",
+    "pageType": true,
+    "usePageSizeMM": "No",
+    "barCodeHeight": 18,
+    "barCodeWidth": 1,
+    "barCodeFontSize": 12
+  },
+  "Print58x44": {
+    "customPageSize": "58mm",
+    "customfontSizePrice": "48px",
+    "customfontSizeName": "14px",
+    "customPageWidth": "170px",
+    "customHeightPrice": "50px",
+    "customHeightName": "40px",
+    "customPageMaxWidth": "170px",
+    "customPrint": "XP-80C",
+    "customfontSizeCustomer": "12px",
+    "pageProperties": {
+      "printPageWidth": 250,
+      "printPageHeight": 180
+    },
+    "usePageSizeMM": "No",
+    "pagePropertiesSize": "58mm",
+    "barCodeHeight": 10,
+    "barCodeWidth": 1,
+    "barCodeFontSize": 12
+  },
+  "Print80x80": {
+    "customPageSize": "80mm",
+    "customfontSizePrice": "60px",
+    "customfontSizeName": "16px",
+    "customPageWidth": "230px",
+    "customHeightPrice": "40px",
+    "customHeightName": "28px",
+    "customPageMaxWidth": "230px",
+    "customPrint": "XP-80C",
+    "customfontSizeCustomer": "20px",
+    "pageProperties": {
+      "printPageWidth": 550,
+      "printPageHeight": 380
+    },
+    "usePageSizeMM": "No",
+    "pagePropertiesSize": "80mm",
+    "barCodeHeight": 10,
+    "barCodeWidth": 2,
+    "barCodeFontSize": 14
+  },
+  "Print100x50": {
+    "customPageSize": "80mm",
+    "customfontSizePrice": "80px",
+    "customfontSizeName": "18px",
+    "customPageWidth": "330px",
+    "customHeightPrice": "60px",
+    "customHeightName": "30px",
+    "customPageMaxWidth": "330px",
+    "customPrint": "XP-80C",
+    "customfontSizeCustomer": "16px",
+    "pageProperties": {
+      "printPageWidth": 550,
+      "printPageHeight": 320
+    },
+    "usePageSizeMM": "No",
+    "pagePropertiesSize": "80mm",
+    "barCodeHeight": 15,
+    "barCodeWidth": 2,
+    "barCodeFontSize": 14
+  },
+  "tipoBD": "POSMASTER",
+  "csvFilePath": "C:/GMiniMarket/data.csv",
+  "habilitar80x80": true,
+  "habilitar50x30": true,
+  "habilitar58x44": false,
+  "habilitar100x50": false
+}

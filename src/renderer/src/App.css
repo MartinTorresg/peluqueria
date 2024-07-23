@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @variants responsive {
+    /* Hide scrollbar for Chrome, Safari, and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+
+    /* Hide scrollbar for IE, Edge, and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+
+.shake-animation {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* App.css */
+
+
+body {
+  background: radial-gradient(circle, #c7c7c7, #8b8b8b);
+}
+
+
+/* Estilo del logo */
+.logo {
+  height: 6em;  /* Altura */
+  padding: 1.5em;  /* Padding */
+  transition: filter 300ms;  /* Transición suave del filtro */
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.top-buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 500px;
+}
+
+.version {
+  position: fixed;       /* Fijo en relación con la ventana del navegador */
+  bottom: 1em;           /* Ajusta según la distancia que desees desde el borde inferior */
+  left: 1em;
+  font-size: 0.7em;
+  background-color: #0000;            /* Ajusta según la distancia que desees desde el borde izquierdo */
+}
+
+/*------------------------------------------------------botones ---------------------------------------------------------------*/
+
+.logout-button {
+  position: fixed;
+  bottom: 40px;
+  left: 10px;
+  font-size: 0.8em;
+  border-radius: var(--button-radius);  /* Añadido aquí */
+}
+
+.custom-buttoningreso {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--button-radius);  /* Añadido aquí */
+  width: 180px;  /* Ajusta según tus necesidades */
+  height: 70px;  /* Ajusta según tus necesidades */
+  font-size: 20px;  /* Ajusta según tus necesidades */
+}
+
+
+.volver-button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--button-radius);  /* Añadido aquí */
+}
+
+.error-message {
+  margin-bottom: 80px;
+  z-index: 1; /* Debe ser mayor que el z-index de .page si es necesario */
+  position: relative; /* Habilita z-index */
+  color: red; /* Color del mensaje de error */
+  font-size: 1.2em; /* Tamaño del mensaje de error */
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;   /* Alinea los elementos verticalmente */
+  align-items: center;      /* Centra los elementos horizontalmente */
+  justify-content: center;  /* Centra los elementos verticalmente */
+  height: 50px;            /* Incrementado la altura */
+  width: 300px;              /* Ocupa todo el ancho disponible */
+  margin-top: 100px;
+}
+
+.login-button{
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: var(--button-padding);
+  cursor: pointer;
+  border-radius: var(--button-radius);  /* Añadido aquí */
+}
+
+.help-button {
+  padding: 5px 10px;
+  width: 50px;
+  height: 40px;
+  right: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.options-container .custom-button {
+  width: 100%;
+  text-align: left;
+  left: 0px;
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--button-radius);
+  margin-bottom: 10px; /* Espaciado entre botones */
+}
+
+.full-height {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.custom-button.active {
+  background-color: #0a4e4b; /* Cambia esto al color que desees */
+}
+
+.mui-textfield {
+  max-width: 300px;  /* Puedes ajustar este valor según tus necesidades */
+}
+
+.form-buttons {
+  display: flex;
+  flex-direction: column; /* Cambiado de row a column */
+  gap: 5px; /* Espacio entre los botones */
+  align-items: center; /* Centra los elementos horizontalmente */
+  margin-top: 20px;
+}
+
+
+.mui-textfield-login {
+  margin-bottom: 30px;
+  background-color: white;
+  color: black;
+}
+
+/* Si quieres cambiar el color del texto de los labels */
+.MuiInputLabel-outlined.Mui-focused {
+  color: black;
+}
+
+/* Si quieres cambiar el color del borde al enfocarse */
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: black;
+}
+
+
+/*------------------------------------------------------ header ---------------------------------------------------------------*/
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  position: fixed;
+  top: 40px;
+  z-index: 1000;
+}
+
+.app-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  height: 100px;
+  width: 170px;
+}
+
+.logo-original,
+.logo-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 170px;
+}
+
+.logo-shadow {
+  z-index: -1;
+  height: 101px;
+  width: 171px;
+  transform: scale(1.0);  /* Hacemos el shadow un poco más grande */
+  filter: brightness(0) invert(1);
+}
+
+
+
+.snackbar-container {
+  position: fixed;
+  top: 85%;
+  left: 1%;
+  transform: translate(-50%, -50%);
+  z-index: 1400; /* Asegúrate de que sea suficientemente alto para estar por encima de otros elementos */
+}
+
+@font-face {
+  font-family: 'Code128';
+  src: url('./assets/Code128.ttf') format('truetype');
+}
+
+.barcode {
+  font-family: 'Code128', sans-serif;
+  font-size: 20px; /* Ajusta el tamaño de fuente según necesites */
+  /* Añade aquí más estilos según necesites */
+}
+
+
+
