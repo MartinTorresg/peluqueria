@@ -2,7 +2,65 @@ import { app, shell, BrowserWindow, ipcMain, Menu } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-import { writeDataToSheet, readDataFromSheet } from './excelUtils'; // Importa las funciones de Excel
+import fs from 'fs/promises';
+import Papa from 'papaparse';
+import express from 'express';
+import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
+
+const backendApp = express();
+const PORT = 3300;
+
+backendApp.use(cors());
+backendApp.use(express.json());
+
+const clientesFilePath = join(__dirname, '../../Resources/clientes.csv');
+
+const readClientesFromCsv = async () => {
+  try {
+    const fileData = await fs.readFile(clientesFilePath, 'utf-8');
+    const parsedData = Papa.parse(fileData, { header: true });
+    return parsedData.data;
+  } catch (error) {
+    console.error('Error reading CSV file:', error);
+    return [];
+  }
+};
+
+const writeClientesToCsv = async (clientes) => {
+  try {
+    const csv = Papa.unparse(clientes);
+    await fs.writeFile(clientesFilePath, csv, 'utf-8');
+  } catch (error) {
+    console.error('Error writing to CSV file:', error);
+  }
+};
+
+ipcMain.handle('get-clientes', async () => {
+  return await readClientesFromCsv();
+});
+
+ipcMain.handle('add-cliente', async (event, cliente) => {
+  const clientes = await readClientesFromCsv();
+  cliente.id = uuidv4(); // Generar un ID único
+  clientes.push(cliente);
+  await writeClientesToCsv(clientes);
+  return { success: true };
+});
+
+ipcMain.handle('update-cliente', async (event, updatedCliente) => {
+  let clientes = await readClientesFromCsv();
+  clientes = clientes.map(cliente => cliente.id === updatedCliente.id ? updatedCliente : cliente);
+  await writeClientesToCsv(clientes);
+  return { success: true };
+});
+
+ipcMain.handle('delete-cliente', async (event, id) => {
+  let clientes = await readClientesFromCsv();
+  clientes = clientes.filter(cliente => cliente.id !== id);
+  await writeClientesToCsv(clientes);
+  return { success: true };
+});
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -13,6 +71,7 @@ function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
+      contextIsolation: true,
     },
   });
 
@@ -86,29 +145,7 @@ ipcMain.handle('reload-app', () => {
   app.exit();
 });
 
-// Manejo de IPC para operaciones de Excel
-ipcMain.handle('add-cliente', async (event, cliente) => {
-  const clientes = readDataFromSheet('Clientes');
-  cliente.id = clientes.length ? Math.max(clientes.map(c => c.id)) + 1 : 1; // Asignar ID único
-  clientes.push(cliente);
-  writeDataToSheet('Clientes', clientes);
-  return { success: true };
-});
-
-ipcMain.handle('update-cliente', async (event, updatedCliente) => {
-  let clientes = readDataFromSheet('Clientes');
-  clientes = clientes.map(cliente => cliente.id === updatedCliente.id ? updatedCliente : cliente);
-  writeDataToSheet('Clientes', clientes);
-  return { success: true };
-});
-
-ipcMain.handle('delete-cliente', async (event, id) => {
-  let clientes = readDataFromSheet('Clientes');
-  clientes = clientes.filter(cliente => cliente.id !== id);
-  writeDataToSheet('Clientes', clientes);
-  return { success: true };
-});
-
-ipcMain.handle('get-clientes', async () => {
-  return readDataFromSheet('Clientes');
+// Configuración de Express
+backendApp.listen(PORT, () => {
+  console.log(`Express server running at http://localhost:${PORT}`);
 });

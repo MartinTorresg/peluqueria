@@ -1,40 +1,49 @@
-const XLSX = require('xlsx');
-const fs = require('fs');
+const ExcelJS = require('exceljs');
 const path = require('path');
 
-const excelFilePath = path.join(__dirname, '../../data/peluqueria.xlsx');
+// Define la ruta del archivo de Excel
+const filePath = path.join(__dirname, '../../data/clientes.xlsx');
 
-const loadWorkbook = () => {
-  if (fs.existsSync(excelFilePath)) {
-    return XLSX.readFile(excelFilePath);
-  } else {
-    const wb = XLSX.utils.book_new();
-    XLSX.writeFile(wb, excelFilePath);
-    return wb;
+// Función para leer datos de una hoja de Excel
+const readDataFromSheet = async (sheetName) => {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(filePath);
+  const worksheet = workbook.getWorksheet(sheetName);
+  
+  if (!worksheet) {
+    console.log(`Worksheet ${sheetName} not found`);
+    return [];
   }
+
+  const data = [];
+  worksheet.eachRow((row, rowNumber) => {
+    const rowData = row.values.slice(1); // Omitir el primer elemento vacío
+    data.push(rowData);
+  });
+
+  return data;
 };
 
-const saveWorkbook = (workbook) => {
-  XLSX.writeFile(workbook, excelFilePath);
-};
-
-const writeDataToSheet = (sheetName, data) => {
-  const workbook = loadWorkbook();
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  if (workbook.SheetNames.includes(sheetName)) {
-    XLSX.utils.book_remove_sheet(workbook, sheetName);
+// Función para escribir datos en una hoja de Excel
+const writeDataToSheet = async (sheetName, data) => {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(filePath);
+  let worksheet = workbook.getWorksheet(sheetName);
+  
+  if (!worksheet) {
+    worksheet = workbook.addWorksheet(sheetName);
   }
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-  saveWorkbook(workbook);
+
+  worksheet.clear();
+  data.forEach((item, index) => {
+    worksheet.addRow(item);
+  });
+
+  await workbook.xlsx.writeFile(filePath);
 };
 
-const readDataFromSheet = (sheetName) => {
-  const workbook = loadWorkbook();
-  const worksheet = workbook.Sheets[sheetName];
-  return worksheet ? XLSX.utils.sheet_to_json(worksheet) : [];
-};
-
+// Exportar las funciones para que puedan ser usadas en otros archivos
 module.exports = {
-  writeDataToSheet,
   readDataFromSheet,
+  writeDataToSheet,
 };

@@ -15,7 +15,9 @@ const Clientes = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
+        console.log('Invoking get-clientes');
         const clientes = await window.electron.invoke('get-clientes');
+        console.log('Clientes fetched:', clientes);
         setClientes(clientes);
       } catch (error) {
         console.error('Error fetching clients:', error);
@@ -40,6 +42,7 @@ const Clientes = () => {
   const handleAddCliente = async () => {
     try {
       const newCliente = { nombre, telefono, email };
+      console.log('Adding cliente:', newCliente);
       await window.electron.invoke('add-cliente', newCliente);
       setClientes([...clientes, newCliente]);
       handleCloseModal();
@@ -59,6 +62,7 @@ const Clientes = () => {
   const handleUpdateCliente = async () => {
     try {
       const updatedCliente = { ...editingCliente, nombre, telefono, email };
+      console.log('Updating cliente:', updatedCliente);
       await window.electron.invoke('update-cliente', updatedCliente);
       setClientes(clientes.map((c) => (c.id === updatedCliente.id ? updatedCliente : c)));
       handleCloseModal();
@@ -69,6 +73,7 @@ const Clientes = () => {
 
   const handleDeleteCliente = async (id) => {
     try {
+      console.log('Deleting cliente with id:', id);
       await window.electron.invoke('delete-cliente', id);
       setClientes(clientes.filter((c) => c.id !== id));
     } catch (error) {
@@ -98,7 +103,7 @@ const Clientes = () => {
         </thead>
         <tbody>
           {clientes.map((cliente) => (
-            <tr key={cliente.id}>
+            <tr key={cliente.id}> {/* Agregar key aquí */}
               <td className="py-2 px-4 border-b">{cliente.nombre}</td>
               <td className="py-2 px-4 border-b">{cliente.telefono}</td>
               <td className="py-2 px-4 border-b">{cliente.email}</td>
@@ -115,18 +120,6 @@ const Clientes = () => {
                     className="text-gray-600 hover:text-gray-800"
                   >
                     <FaTrash />
-                  </button>
-                  <button
-                    onClick={() => window.open(`tel:${cliente.telefono}`)}
-                    className="text-gray-600 hover:text-gray-800"
-                  >
-                    <FaPhone />
-                  </button>
-                  <button
-                    onClick={() => window.open(`sms:${cliente.telefono}`)}
-                    className="text-gray-600 hover:text-gray-800"
-                  >
-                    <FaComment />
                   </button>
                 </div>
               </td>
