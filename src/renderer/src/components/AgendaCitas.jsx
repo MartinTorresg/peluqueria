@@ -8,28 +8,47 @@ const localizer = momentLocalizer(moment);
 
 const AgendaCitas = () => {
   const [citas, setCitas] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [servicios, setServicios] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    const fetchCitas = async () => {
+    const fetchData = async () => {
       try {
-        const citas = await window.electron.invoke('get-citas');
-        const eventos = citas.map((cita) => ({
-          id: cita.id,
-          title: cita.cliente.nombre,
-          start: new Date(`${cita.fecha}T${cita.horaInicio}`),
-          end: new Date(`${cita.fecha}T${cita.horaFin}`),
-          cliente: cita.cliente,
-          servicios: cita.servicios,
-          status: cita.status,
-        }));
+        const [citasData, clientesData, serviciosData] = await Promise.all([
+          window.electron.invoke('get-citas'),
+          window.electron.invoke('get-clientes'),
+          window.electron.invoke('get-productos-servicios')
+        ]);
+
+        setClientes(clientesData);
+        setServicios(serviciosData);
+
+        const eventos = citasData.map((cita) => {
+          const cliente = clientesData.find(c => c.id === cita.clienteId) || { nombre: 'Cliente desconocido' };
+          const serviciosAgendados = Array.isArray(cita.servicios) ? cita.servicios.map(servicioId => {
+            const servicio = serviciosData.find(s => s.id === servicioId);
+            return servicio ? servicio.nombre : 'Servicio desconocido';
+          }).join(', ') : 'Sin servicios';
+
+          return {
+            id: cita.id,
+            title: cliente.nombre,
+            start: new Date(`${cita.fecha}T${cita.horaInicio}`),
+            end: new Date(`${cita.fecha}T${cita.horaFin}`),
+            cliente,
+            servicios: serviciosAgendados,
+            status: cita.status,
+          };
+        });
+
         setCitas(eventos);
       } catch (error) {
-        console.error('Error fetching citas:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchCitas();
+    fetchData();
   }, []);
 
   const handleSelectEvent = (event) => {
@@ -78,7 +97,7 @@ const AgendaCitas = () => {
           <p><strong>Fecha Cita:</strong> {moment(selectedEvent.start).format('DD/MM/YYYY')}</p>
           <p><strong>Hora Inicio:</strong> {moment(selectedEvent.start).format('HH:mm:ss')}</p>
           <p><strong>Hora Término:</strong> {moment(selectedEvent.end).format('HH:mm:ss')}</p>
-          <p><strong>Servicios Agendados:</strong> {selectedEvent.servicios.map(s => s.nombre).join(', ')}</p>
+          <p><strong>Servicios Agendados:</strong> {selectedEvent.servicios}</p>
           <p><strong>Cliente:</strong> {selectedEvent.cliente.nombre}</p>
           <p><strong>Status Cita:</strong> {selectedEvent.status}</p>
           <button

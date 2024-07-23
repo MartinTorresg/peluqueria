@@ -45,10 +45,6 @@ ipcMain.handle('get-clientes', async () => {
 
 ipcMain.handle('add-cliente', async (event, cliente) => {
   const clientes = await readDataFromCsv(clientesFilePath);
-  const existingClient = clientes.find(c => c.telefono === cliente.telefono);
-  if (existingClient) {
-    throw new Error('El número de teléfono ya existe.');
-  }
   cliente.id = uuidv4(); // Generar un ID único
   clientes.push(cliente);
   await writeDataToCsv(clientesFilePath, clientes);
@@ -102,9 +98,23 @@ ipcMain.handle('get-citas', async () => {
 });
 
 ipcMain.handle('add-cita', async (event, cita) => {
+  const clientes = await readDataFromCsv(clientesFilePath);
+  const productosServicios = await readDataFromCsv(productosServiciosFilePath);
+
+  // Buscar el cliente y los servicios completos
+  const cliente = clientes.find(c => c.id === cita.clienteId);
+  const servicios = cita.servicios.map(servicioId => productosServicios.find(p => p.id === servicioId));
+
+  // Construir la cita completa
+  const nuevaCita = {
+    ...cita,
+    cliente,
+    servicios,
+  };
+
   const citas = await readDataFromCsv(citasFilePath);
-  cita.id = uuidv4(); // Generar un ID único
-  citas.push(cita);
+  nuevaCita.id = uuidv4(); // Generar un ID único
+  citas.push(nuevaCita);
   await writeDataToCsv(citasFilePath, citas);
   return { success: true };
 });
