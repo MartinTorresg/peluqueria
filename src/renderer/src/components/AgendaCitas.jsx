@@ -48,7 +48,21 @@ const AgendaCitas = () => {
         events={citas}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: 500 }}
+        style={{ height: 500, backgroundColor: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+        eventPropGetter={(event) => ({
+          style: {
+            backgroundColor: '#3182CE', // Color de fondo del evento
+            borderRadius: '5px',
+            color: 'white',
+            border: 'none',
+            display: 'block',
+          }
+        })}
+        dayPropGetter={() => ({
+          style: {
+            backgroundColor: '#f5f5f5', // Color de fondo de los días
+          }
+        })}
         selectable
         onSelectEvent={handleSelectEvent}
       />
@@ -58,6 +72,7 @@ const AgendaCitas = () => {
           onRequestClose={handleCloseModal}
           contentLabel="Detalles de la Cita"
           className="bg-white p-6 rounded shadow-lg max-w-lg mx-auto mt-16"
+          overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
         >
           <h2 className="text-2xl mb-4">Detalles de la Cita</h2>
           <p><strong>Fecha Cita:</strong> {moment(selectedEvent.start).format('DD/MM/YYYY')}</p>
