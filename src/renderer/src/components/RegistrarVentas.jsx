@@ -31,7 +31,7 @@ const RegistrarVentas = () => {
         ]);
         setVentas(ventasData);
         setClientes(clientesData);
-        setProductosServicios(productosServiciosData.filter(item => item.tipo === 'Servicio'));
+        setProductosServicios(productosServiciosData.filter(item => item.tipo === 'Servicio' || item.tipo === 'Producto'));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -267,19 +267,47 @@ const RegistrarVentas = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option value="">Seleccionar Servicio</option>
-              {productosServicios.map((servicio) => (
+              {productosServicios.filter(item => item.tipo === 'Servicio').map((servicio) => (
                 <option key={servicio.id} value={servicio.id}>
                   {servicio.nombre}
                 </option>
               ))}
             </select>
             <ul className="mt-2">
-              {newVenta.servicios.map((servicio) => (
+              {newVenta.servicios.filter(item => item.tipo === 'Servicio').map((servicio) => (
                 <li key={servicio.id} className="flex justify-between items-center">
                   {servicio.nombre} - {servicio.cantidad}
                   <button
                     type="button"
                     onClick={() => handleRemoveServicio(servicio.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    x
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Productos</label>
+            <select
+              onChange={handleServicioChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              <option value="">Seleccionar Producto</option>
+              {productosServicios.filter(item => item.tipo === 'Producto').map((producto) => (
+                <option key={producto.id} value={producto.id}>
+                  {producto.nombre}
+                </option>
+              ))}
+            </select>
+            <ul className="mt-2">
+              {newVenta.servicios.filter(item => item.tipo === 'Producto').map((producto) => (
+                <li key={producto.id} className="flex justify-between items-center">
+                  {producto.nombre} - {producto.cantidad}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveServicio(producto.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     x

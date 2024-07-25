@@ -77,6 +77,11 @@ ipcMain.handle('get-productos-servicios', async () => {
   return await readDataFromCsv(productosServiciosFilePath);
 });
 
+ipcMain.handle('get-productos-inventario', async () => {
+  const productos = await readDataFromCsv(productosServiciosFilePath);
+  return productos.filter(producto => producto.inventario === 'Si');
+});
+
 ipcMain.handle('add-producto-servicio', async (event, producto) => {
   const productos = await readDataFromCsv(productosServiciosFilePath);
   producto.id = uuidv4(); // Generar un ID único
@@ -95,6 +100,19 @@ ipcMain.handle('update-producto-servicio', async (event, updatedProducto) => {
 ipcMain.handle('delete-producto-servicio', async (event, id) => {
   let productos = await readDataFromCsv(productosServiciosFilePath);
   productos = productos.filter(producto => producto.id !== id);
+  await writeDataToCsv(productosServiciosFilePath, productos);
+  return { success: true };
+});
+
+ipcMain.handle('update-producto-inventario', async (event, { id, cantidad }) => {
+  let productos = await readDataFromCsv(productosServiciosFilePath);
+  productos = productos.map(producto => {
+    if (producto.id === id) {
+      producto.stock = (parseInt(producto.stock) || 0) + cantidad;
+      console.log(`Updated stock for product ${id}: ${producto.stock}`);
+    }
+    return producto;
+  });
   await writeDataToCsv(productosServiciosFilePath, productos);
   return { success: true };
 });
@@ -130,7 +148,6 @@ ipcMain.handle('add-cita', async (event, cita) => {
   return { success: true };
 });
 
-
 ipcMain.handle('update-cita', async (event, updatedCita) => {
   let citas = await readDataFromCsv(citasFilePath);
   citas = citas.map(cita => cita.id === updatedCita.id ? updatedCita : cita);
@@ -155,8 +172,31 @@ ipcMain.handle('add-venta', async (event, venta) => {
   venta.id = uuidv4(); // Generar un ID único
   ventas.push(venta);
   await writeDataToCsv(ventasFilePath, ventas);
+
+  console.log('Processing venta:', venta);
+
+  // Actualizar el inventario de productos vendidos
+  for (const servicio of venta.servicios) {
+    if (servicio.tipo === 'Producto') {
+      console.log(`Updating inventory for product: ${servicio.id} with quantity change: -${servicio.cantidad}`);
+      await updateProductInventory(servicio.id, -servicio.cantidad);
+    }
+  }
+
   return { success: true };
 });
+
+const updateProductInventory = async (id, cantidad) => {
+  let productos = await readDataFromCsv(productosServiciosFilePath);
+  productos = productos.map(producto => {
+    if (producto.id === id) {
+      producto.stock = (parseInt(producto.stock) || 0) + cantidad;
+      console.log(`Updated stock for product ${id}: ${producto.stock}`);
+    }
+    return producto;
+  });
+  await writeDataToCsv(productosServiciosFilePath, productos);
+};
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -245,3 +285,4 @@ ipcMain.handle('reload-app', () => {
 backendApp.listen(PORT, () => {
   console.log(`Express server running at http://localhost:${PORT}`);
 });
+

@@ -1,4 +1,2 @@
-nombre,tipo,inventario,costo,precioVenta,utilidad,id
-Corte de Cabello,Servicio,No,5000,10000,5000.00,dae2778a-7a45-4ede-811e-5e6bc5688e1f
-corte mujer,Servicio,No,3000,15000,12000.00,c25c383b-1eb5-4416-9a91-d10e80f61a98
-tinte de cabello,Producto,Si,1000,2500,1500.00,19eb750e-0663-418d-bd16-1f09a2f6938e
+nombre,tipo,inventario,costo,precioVenta,utilidad,id,servicios,stock
+tinte de cabello,Producto,Si,1000,5000,4000.00,5c2feb59-d232-412f-bc69-11196c9e052f,[],108
