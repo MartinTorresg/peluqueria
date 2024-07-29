@@ -6,6 +6,7 @@ import Clientes from './components/Clientes'; // Importa el componente Clientes
 import AgendaCitas from './components/AgendaCitas';
 import RegistrarVentas from './components/RegistrarVentas';
 import RegistrarInventario from './components/RegistrarInventario';
+import CitadosAhora from './components/CitadosAhora';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Route path="/" element={<AgendaCitas />} />
             <Route path="/registrar-venta" element={<RegistrarVentas />} />
             <Route path="/registrar-inventario" element={<RegistrarInventario />} />
+            <Route path="/citados-ahora" element={<CitadosAhora />} />
           </Routes>
         </main>
       </div>
