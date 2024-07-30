@@ -1,3 +1,3 @@
 nombre,tipo,inventario,costo,precioVenta,utilidad,id,servicios,stock
-tinte de cabello,Producto,Si,1000,5000,4000.00,5c2feb59-d232-412f-bc69-11196c9e052f,[],107
-corte de pelo,Servicio,No,1000,10000,9000.00,cbecca83-ad92-4a65-86fd-681e23225018,,
+tinte de cabello,Producto,Si,1000,5000,4000.00,5c2feb59-d232-412f-bc69-11196c9e052f,[],106
+corte de pelo,Servicio,No,1000,10000,9000.00,cbecca83-ad92-4a65-86fd-681e23225018,[],

@@ -7,6 +7,7 @@ import AgendaCitas from './components/AgendaCitas';
 import RegistrarVentas from './components/RegistrarVentas';
 import RegistrarInventario from './components/RegistrarInventario';
 import CitadosAhora from './components/CitadosAhora';
+import Dashboard from './components/Dashboard';
 import './App.css';
 
 function App() {
@@ -19,11 +20,10 @@ function App() {
             <Link to="/programar-citas" className="hover:bg-gray-700 p-2 rounded">Programar citas</Link>
             <Link to="/registrar-venta" className="hover:bg-gray-700 p-2 rounded">Registrar Venta</Link>
             <Link to="/citados-ahora" className="hover:bg-gray-700 p-2 rounded">Citados Ahora</Link>
-            <Link to="/confirmar-citas" className="hover:bg-gray-700 p-2 rounded">Confirmar Citas</Link>
             <Link to="/clientes" className="hover:bg-gray-700 p-2 rounded">Clientes</Link>
             <Link to="/productos-y-servicios" className="hover:bg-gray-700 p-2 rounded">Agregar Productos y Servicios</Link>
             <Link to="/registrar-inventario" className="hover:bg-gray-700 p-2 rounded">Registrar Inventario</Link>
-            <Link to="/existencias" className="hover:bg-gray-700 p-2 rounded">Existencias</Link>
+            <Link to="/dashboards" className="hover:bg-gray-700 p-2 rounded">Dashboard</Link>
           </div>
         </header>
         <main className="flex-grow p-4">
@@ -35,6 +35,7 @@ function App() {
             <Route path="/registrar-venta" element={<RegistrarVentas />} />
             <Route path="/registrar-inventario" element={<RegistrarInventario />} />
             <Route path="/citados-ahora" element={<CitadosAhora />} />
+            <Route path="/dashboards" element={<Dashboard />} />
           </Routes>
         </main>
       </div>
