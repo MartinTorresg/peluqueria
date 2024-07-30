@@ -5,18 +5,28 @@ Modal.setAppElement('#root'); // Ajusta el selector según tu configuración
 
 const CitadosAhora = () => {
   const [citas, setCitas] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [selectedCita, setSelectedCita] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCitas = async () => {
       try {
-        const citasData = await window.electron.invoke('get-citas');
-        const today = new Date().toISOString().split('T')[0]; // Obtener fecha de hoy en formato YYYY-MM-DD
+        const [citasData, clientesData] = await Promise.all([
+          window.electron.invoke('get-citas'),
+          window.electron.invoke('get-clientes')
+        ]);
+
+        const today = new Date().toLocaleString('en-CA', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit' }).split(' ')[0];
+
         const citasHoy = citasData.filter(cita => cita.fecha === today);
+
         setCitas(citasHoy);
+        setClientes(clientesData);
+        console.log('Citas de hoy:', citasHoy);
+        console.log('Clientes:', clientesData);
       } catch (error) {
-        console.error('Error fetching citas:', error);
+        console.error('Error fetching citas or clientes:', error);
       }
     };
     fetchCitas();
@@ -25,6 +35,7 @@ const CitadosAhora = () => {
   const handleOpenModal = (cita) => {
     setSelectedCita(cita);
     setIsModalOpen(true);
+    console.log('Cita seleccionada:', cita);
   };
 
   const handleCloseModal = () => {
@@ -32,12 +43,23 @@ const CitadosAhora = () => {
     setSelectedCita(null);
   };
 
-  const handleStatusChange = (status) => {
+  const handleStatusChange = async (status) => {
     if (selectedCita) {
       const updatedCita = { ...selectedCita, status };
-      // Aquí debes implementar la lógica para actualizar la cita en el backend
-      // Por ejemplo, podrías llamar a una función que haga un `window.electron.invoke('update-cita', updatedCita);`
-      setSelectedCita(updatedCita);
+      try {
+        const response = await window.electron.invoke('update-cita', updatedCita);
+        if (response.success) {
+          setCitas((prevCitas) =>
+            prevCitas.map((cita) => (cita.id === updatedCita.id ? updatedCita : cita))
+          );
+          console.log('Cita actualizada:', updatedCita);
+          setSelectedCita(updatedCita);
+        } else {
+          console.error('Error updating cita');
+        }
+      } catch (error) {
+        console.error('Error updating cita:', error);
+      }
     }
   };
 
@@ -53,7 +75,6 @@ const CitadosAhora = () => {
             <th className="border px-4 py-2">SERVICIOS AGENDADOS</th>
             <th className="border px-4 py-2">CLIENTE</th>
             <th className="border px-4 py-2">STATUS CITA</th>
-            <th className="border px-4 py-2">Nombre Cliente</th>
           </tr>
         </thead>
         <tbody>
@@ -63,9 +84,8 @@ const CitadosAhora = () => {
               <td className="border px-4 py-2">{cita.horaInicio}</td>
               <td className="border px-4 py-2">{cita.horaFin}</td>
               <td className="border px-4 py-2">{cita.servicios.map(servicio => servicio.nombre).join(', ')}</td>
-              <td className="border px-4 py-2">{cita.cliente?.nombre}</td>
+              <td className="border px-4 py-2">{clientes.find(c => c.id === cita.clienteId)?.nombre || 'Cliente desconocido'}</td>
               <td className="border px-4 py-2">{cita.status}</td>
-              <td className="border px-4 py-2">{cita.cliente?.nombre}</td>
             </tr>
           ))}
         </tbody>
@@ -84,7 +104,7 @@ const CitadosAhora = () => {
           <p><strong>Hora Inicio:</strong> {selectedCita.horaInicio}</p>
           <p><strong>Hora Término:</strong> {selectedCita.horaFin}</p>
           <p><strong>Servicios Agendados:</strong> {selectedCita.servicios.map(servicio => servicio.nombre).join(', ')}</p>
-          <p><strong>Cliente:</strong> {selectedCita.cliente?.nombre}</p>
+          <p><strong>Cliente:</strong> {clientes.find(c => c.id === selectedCita.clienteId)?.nombre || 'Cliente desconocido'}</p>
           <p><strong>Status Cita:</strong> {selectedCita.status}</p>
           <h3 className="text-xl mt-4">Acciones</h3>
           <div className="flex space-x-4">
