@@ -17,7 +17,7 @@ const CitadosAhora = () => {
           window.electron.invoke('get-clientes')
         ]);
 
-        const today = new Date().toLocaleString('en-CA', { timeZone: 'America/Santiago', year: 'numeric', month: '2-digit', day: '2-digit' }).split(' ')[0];
+        const today = new Date().toISOString().split('T')[0];
 
         const citasHoy = citasData.filter(cita => cita.fecha === today);
 

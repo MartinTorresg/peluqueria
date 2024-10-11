@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-
-Modal.setAppElement('#root'); // Ajusta el selector según tu configuración
 
 const ProductosYServicios = () => {
   const [productos, setProductos] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [nombre, setNombre] = useState('');
   const [tipo, setTipo] = useState('Producto');
   const [inventario, setInventario] = useState('No');
@@ -29,29 +25,13 @@ const ProductosYServicios = () => {
     fetchProductos();
   }, []);
 
-  const handleOpenModal = () => {
-    setModalIsOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalIsOpen(false);
-    setNombre('');
-    setTipo('Producto');
-    setInventario('No');
-    setCosto('');
-    setPrecioVenta('');
-    setUtilidad('');
-    setEditingProducto(null);
-    setError('');
-  };
-
   const handleAddProducto = async () => {
     try {
       const newProducto = { nombre, tipo, inventario, costo, precioVenta, utilidad: (precioVenta - costo).toFixed(2) };
       const response = await window.electron.invoke('add-producto-servicio', newProducto);
       if (response.success) {
         setProductos([...productos, newProducto]);
-        handleCloseModal();
+        resetForm();
       } else {
         setError(response.error);
       }
@@ -68,7 +48,6 @@ const ProductosYServicios = () => {
     setCosto(producto.costo);
     setPrecioVenta(producto.precioVenta);
     setUtilidad(producto.utilidad);
-    handleOpenModal();
   };
 
   const handleUpdateProducto = async () => {
@@ -76,7 +55,7 @@ const ProductosYServicios = () => {
       const updatedProducto = { ...editingProducto, nombre, tipo, inventario, costo, precioVenta, utilidad: (precioVenta - costo).toFixed(2) };
       await window.electron.invoke('update-producto-servicio', updatedProducto);
       setProductos(productos.map((p) => (p.id === updatedProducto.id ? updatedProducto : p)));
-      handleCloseModal();
+      resetForm();
     } catch (error) {
       console.error('Error updating producto:', error);
     }
@@ -91,6 +70,17 @@ const ProductosYServicios = () => {
     }
   };
 
+  const resetForm = () => {
+    setNombre('');
+    setTipo('Producto');
+    setInventario('No');
+    setCosto('');
+    setPrecioVenta('');
+    setUtilidad('');
+    setEditingProducto(null);
+    setError('');
+  };
+
   useEffect(() => {
     if (costo !== '' && precioVenta !== '') {
       setUtilidad((precioVenta - costo).toFixed(2));
@@ -101,12 +91,69 @@ const ProductosYServicios = () => {
     <div className="container mx-auto mt-8">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Agregar Productos y Servicios</h1>
-        <button
-          onClick={handleOpenModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
+      </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          className="w-full px-3 py-2 border rounded mb-2"
+        />
+        <select
+          value={tipo}
+          onChange={(e) => setTipo(e.target.value)}
+          className="w-full px-3 py-2 border rounded mb-2"
         >
-          + Add
-        </button>
+          <option value="Producto">Producto</option>
+          <option value="Servicio">Servicio</option>
+        </select>
+        <select
+          value={inventario}
+          onChange={(e) => setInventario(e.target.value)}
+          className="w-full px-3 py-2 border rounded mb-2"
+        >
+          <option value="Si">Si</option>
+          <option value="No">No</option>
+        </select>
+        <input
+          type="number"
+          placeholder="Costo"
+          value={costo}
+          onChange={(e) => setCosto(parseFloat(e.target.value))}
+          className="w-full px-3 py-2 border rounded mb-2"
+        />
+        <input
+          type="number"
+          placeholder="Precio Venta"
+          value={precioVenta}
+          onChange={(e) => setPrecioVenta(parseFloat(e.target.value))}
+          className="w-full px-3 py-2 border rounded mb-2"
+        />
+        <input
+          type="number"
+          placeholder="Utilidad"
+          value={utilidad}
+          readOnly
+          className="w-full px-3 py-2 border rounded mb-2 bg-gray-200"
+        />
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 focus:outline-none"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={editingProducto ? handleUpdateProducto : handleAddProducto}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
+          >
+            {editingProducto ? 'Actualizar' : 'Agregar'}
+          </button>
+        </div>
       </div>
       <table className="min-w-full bg-white">
         <thead>
@@ -149,91 +196,6 @@ const ProductosYServicios = () => {
           ))}
         </tbody>
       </table>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={handleCloseModal}
-        contentLabel="Formulario de Producto/Servicio"
-        className="bg-white p-6 rounded shadow-lg max-w-lg mx-auto mt-16"
-      >
-        <h2 className="text-2xl mb-4">{editingProducto ? 'Editar Producto/Servicio' : 'Agregar Producto/Servicio'}</h2>
-        <form>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
-            <input
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Tipo:</label>
-            <select
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            >
-              <option value="Producto">Producto</option>
-              <option value="Servicio">Servicio</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Inventario:</label>
-            <select
-              value={inventario}
-              onChange={(e) => setInventario(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            >
-              <option value="Si">Si</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Costo:</label>
-            <input
-              type="number"
-              value={costo}
-              onChange={(e) => setCosto(parseFloat(e.target.value))}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Precio Venta:</label>
-            <input
-              type="number"
-              value={precioVenta}
-              onChange={(e) => setPrecioVenta(parseFloat(e.target.value))}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Utilidad:</label>
-            <input
-              type="number"
-              value={utilidad}
-              readOnly
-              className="w-full px-3 py-2 border rounded bg-gray-200"
-            />
-          </div>
-          {error && <div className="text-red-500 mb-4">{error}</div>}
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={handleCloseModal}
-              className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 focus:outline-none"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              onClick={editingProducto ? handleUpdateProducto : handleAddProducto}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none"
-            >
-              {editingProducto ? 'Actualizar' : 'Agregar'}
-            </button>
-          </div>
-        </form>
-      </Modal>
     </div>
   );
 };

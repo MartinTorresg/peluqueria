@@ -6,16 +6,18 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      sourcemap: true, // Habilita la generación de source maps
       rollupOptions: {
-        external: ['mysql2/promise', 'path', 'fs', 'os', 'util', 'uuid']  // Aquí agrega todos los módulos integrados de Node.js que necesites
+        external: ['mysql2/promise', 'path', 'fs', 'os', 'util', 'uuid']
       }
     }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      sourcemap: true, // Habilita la generación de source maps
       rollupOptions: {
-        external: ['mysql2/promise', 'path', 'fs', 'os', 'util', 'uuid']  // Aquí agrega todos los módulos integrados de Node.js que necesites
+        external: ['mysql2/promise', 'path', 'fs', 'os', 'util', 'uuid']
       }
     }
   },
@@ -25,6 +27,9 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    build: {
+      sourcemap: true // Habilita la generación de source maps
+    }
   }
 })
